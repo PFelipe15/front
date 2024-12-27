@@ -1,0 +1,120 @@
+// Este é seu arquivo de schema do Prisma,
+// saiba mais na documentação: https://pris.ly/d/prisma-schema
+
+// Procurando maneiras de acelerar suas consultas ou escalar facilmente com funções serverless ou edge?
+// Experimente o Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String
+  password    String
+  perfilId    Int
+  }
+
+// Modelo principal que representa um Projeto/Obra
+model Workspace {
+  id            Int             @id @default(autoincrement())
+  nome          String
+  orcamento     Float
+  gasto         Float          @default(0)
+  localizacao   String
+  dataInicio    DateTime
+  status        status          @default(EM_ANDAMENTO)
+  dataFim       DateTime
+  gerente       String
+  descricao     String?
+  categoria     String
+  prioridade    String
+    riscos        Float          @default(0)
+    metragem      Float?
+    linkGoogleMaps String?
+    linkGoogleEarth String?
+    latitude      Float?
+    longitude     Float?
+    pavimentos    Int?
+    terreno       Float?
+  servicos      Service[]
+  materiais     Material[]
+  atualizacoes  Atualizacao[]
+  documentos    Documento[]
+}
+
+// Modelo que representa os serviços/etapas da obra
+model Service {
+  id                Int       @id @default(autoincrement())
+  nome              String
+  orcamento         Float
+  categoria         String
+  dataInicio        DateTime
+  dataFim           DateTime
+  status            status          @default(EM_ANDAMENTO)
+  ultimaAtualizacao DateTime  @default(now())
+  observacoes       String?
+  teamId            Int?
+  projetoId         Int
+  team              Team?     @relation(fields: [teamId], references: [id])
+  workspace         Workspace @relation(fields: [projetoId], references: [id])
+}
+
+// Modelo para controle de materiais
+model Material {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  quantidade  Int
+  valor       Float
+  workspaceId Int
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+// Modelo para registro de atualizações/eventos
+model Atualizacao {
+  id          Int       @id @default(autoincrement())
+  descricao   String
+  tipo        String    // ARQUITETONICO, DIARIO_OBRA, etc
+  data        DateTime  @default(now())
+  workspaceId Int
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+// Modelo para Equipes
+model Team {
+  id            Int       @id @default(autoincrement())
+  nome          String
+  representante String
+  quantidade    Int
+  servicos      Service[]
+}
+
+// Novo modelo para documentos técnicos
+model Documento {
+  id          Int       @id @default(autoincrement())
+  tipo        String    // Planta, Memorial, ART, etc
+  url         String
+  workspaceId Int
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+
+enum PerfilType {
+  ENGENHEIRO
+  GESTOR
+}
+
+enum status {
+  NAO_INICIADO
+  EM_ANDAMENTO
+  CONCLUIDO
+  ATRASADO
+}
+
