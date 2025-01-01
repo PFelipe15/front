@@ -1,16 +1,14 @@
-"use client"
-
-import { useState } from "react"
+"use client";
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { CalendarIcon, PlusCircle, Building2, Users, MapPin, Banknote, X } from "lucide-react"
-import { cn, formatCurrency } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils";
 import { Separator } from "../ui/separator"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
@@ -20,10 +18,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { z } from "zod"
 import { api } from '@/lib/axios'
 import axios from 'axios'
-import { isBefore, isAfter, startOfToday } from "date-fns"
-import DatePicker, { registerLocale } from "react-datepicker"
+import { isBefore, startOfToday } from "date-fns";
+import { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import { useSession } from "next-auth/react"
 
 interface CreateWorkspaceModalProps {
   onWorkspaceCreated?: () => void
@@ -63,8 +62,10 @@ export function CreateWorkspaceModal({ onWorkspaceCreated, typeButton  }: Create
     categoria: "",
     prioridade: "media",
    })
-
   const [dateError, setDateError] = useState("")
+  const { data: session } = useSession()
+ 
+  
 
   const validateForm = () => {
     try {
@@ -79,6 +80,9 @@ export function CreateWorkspaceModal({ onWorkspaceCreated, typeButton  }: Create
       return false
     }
   }
+
+ 
+     
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -154,10 +158,12 @@ export function CreateWorkspaceModal({ onWorkspaceCreated, typeButton  }: Create
     setDateError("")
     return true
   }
+  
+ 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger >
         {typeButton === "icon" ? (
           <TooltipProvider>
 
@@ -174,7 +180,7 @@ export function CreateWorkspaceModal({ onWorkspaceCreated, typeButton  }: Create
           </TooltipProvider>
         ) : (
           <Button  className="gap-2">
-        Criar novo projeto   <PlusCircle size={16} className="text-secondary" />
+              Criar novo projeto    <PlusCircle size={16} className="text-secondary" />
           </Button>
         )}
       </DialogTrigger>
@@ -209,7 +215,7 @@ export function CreateWorkspaceModal({ onWorkspaceCreated, typeButton  }: Create
                 <div className="grid gap-3">
                   <Label htmlFor="nome" className="flex items-center gap-2">
                     <Building2 size={16} />
-                    Nome do Projeto
+                    Nome do Projeto {JSON.stringify(session?.user)}
                   </Label>
                   <Input
                     id="nome"
@@ -406,5 +412,5 @@ export function CreateWorkspaceModal({ onWorkspaceCreated, typeButton  }: Create
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

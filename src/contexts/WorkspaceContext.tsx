@@ -1,8 +1,8 @@
 "use client"
 
+import { Workspace } from '@prisma/client'
 import { createContext, useContext, useState, useCallback } from 'react'
-import { Workspace } from '@/types'
- interface WorkspaceContextType {
+  interface WorkspaceContextType {
   workspaces: Workspace[]
   currentWorkspace: Workspace | null
   refreshWorkspaces: () => Promise<void>

@@ -13,15 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id          Int       @id @default(autoincrement())
-  email       String
+  name        String
+  email       String    @unique
   password    String
-  perfilId    Int
-  }
+  type        PerfilType
 
+  }
 // Modelo principal que representa um Projeto/Obra
 model Workspace {
   id            Int             @id @default(autoincrement())
@@ -36,7 +35,7 @@ model Workspace {
   descricao     String?
   categoria     String
   prioridade    String
-    riscos        Float          @default(0)
+  riscos        Float          @default(0)
     metragem      Float?
     linkGoogleMaps String?
     linkGoogleEarth String?
@@ -48,8 +47,8 @@ model Workspace {
   materiais     Material[]
   atualizacoes  Atualizacao[]
   documentos    Documento[]
+ 
 }
-
 // Modelo que representa os serviços/etapas da obra
 model Service {
   id                Int       @id @default(autoincrement())
@@ -66,7 +65,6 @@ model Service {
   team              Team?     @relation(fields: [teamId], references: [id])
   workspace         Workspace @relation(fields: [projetoId], references: [id])
 }
-
 // Modelo para controle de materiais
 model Material {
   id          Int       @id @default(autoincrement())
@@ -75,8 +73,9 @@ model Material {
   valor       Float
   workspaceId Int
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  fornecedorId Int
+  fornecedor   Fornecedor @relation(fields: [fornecedorId], references: [id])
 }
-
 // Modelo para registro de atualizações/eventos
 model Atualizacao {
   id          Int       @id @default(autoincrement())
@@ -86,7 +85,6 @@ model Atualizacao {
   workspaceId Int
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 }
-
 // Modelo para Equipes
 model Team {
   id            Int       @id @default(autoincrement())
@@ -95,7 +93,6 @@ model Team {
   quantidade    Int
   servicos      Service[]
 }
-
 // Novo modelo para documentos técnicos
 model Documento {
   id          Int       @id @default(autoincrement())
@@ -105,10 +102,10 @@ model Documento {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 }
 
-
 enum PerfilType {
   ENGENHEIRO
   GESTOR
+  ADMIN
 }
 
 enum status {
@@ -118,3 +115,13 @@ enum status {
   ATRASADO
 }
 
+model Fornecedor {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  cnpj        String
+  email       String
+  telefone    String
+  material    Material[]
+}
+
+ 

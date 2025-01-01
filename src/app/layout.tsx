@@ -17,9 +17,9 @@ export default function RootLayout({
 }) {
   return (
        <html lang="pt-BR">
+          <Toaster richColors closeButton position="top-right" />
         <body className={cn("h-screen", inter.className)}>
           {children}
-          <Toaster richColors closeButton position="top-right" />
         </body>
       </html>
    )

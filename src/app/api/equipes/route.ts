@@ -3,7 +3,11 @@ import { prisma } from "@/lib/utils"
 
 export async function GET() {
     try {
-        const equipes = await prisma.team.findMany()
+        const equipes = await prisma.team.findMany({
+            include: {
+                servicos: true
+            }
+        })
         return NextResponse.json(equipes)
     } catch (error) {
         console.error('Erro detalhado:', error)

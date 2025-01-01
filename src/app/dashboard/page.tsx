@@ -94,12 +94,7 @@ export default function DashboardGeral() {
   const projetosConcluidos = workspaces.filter(w => 
     w.servicos?.every(s => s.status === 'CONCLUIDO')
   ).length
-  const projetosEmAndamento = workspaces.filter(w => 
-    w.servicos?.some(s => s.status === 'EM_ANDAMENTO')
-  ).length
-  const projetosAtrasados = workspaces.filter(w => 
-    w.servicos?.some(s => s.status === 'ATRASADO')
-  ).length
+ 
 
   const orcamentoTotal = workspaces.reduce((acc, w) => acc + w.orcamento, 0)
   const gastoTotal = services?.reduce((acc, w) => acc + w.orcamento, 0)
